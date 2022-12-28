@@ -1,5 +1,10 @@
 const {Router} = require("express");
 const user = require('../models/user.model');
+const express = require("express");
+const {
+  registerUser,
+  authUser,
+} = require("../controllers/user.controller");
 
 const route = Router();
 
@@ -17,7 +22,10 @@ route.get('/:email' , async(req,res)=>{
     res.send("fin...");
 })
 
+const router = express.Router();
 
+router.route("/register").post(registerUser);
+router.route("/login").post(authUser);
 
 
 
@@ -26,3 +34,4 @@ route.get('/:email' , async(req,res)=>{
 
 
 module.exports = route;
+module.exports = router;
