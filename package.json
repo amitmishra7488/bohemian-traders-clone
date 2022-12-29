@@ -1,5 +1,5 @@
 {
-  "name": "frank_body_backend",
+  "name": "bohemian-traders-clone",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Mr-raaz/Frank_body_backend.git"
+    "url": "git+https://github.com/amitmishra7488/bohemian-traders-clone.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Mr-raaz/Frank_body_backend/issues"
+    "url": "https://github.com/amitmishra7488/bohemian-traders-clone/issues"
   },
-  "homepage": "https://github.com/Mr-raaz/Frank_body_backend#readme",
+  "homepage": "https://github.com/amitmishra7488/bohemian-traders-clone#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
