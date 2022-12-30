@@ -1,3 +1,4 @@
+
 require('dotenv').config()
 const mongoose = require("mongoose");
 
@@ -9,7 +10,6 @@ async function connect(){
             if(err){
                 reject(err);
             }
-
             resolve();
         })
     })

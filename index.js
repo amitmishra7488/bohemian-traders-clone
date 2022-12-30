@@ -10,12 +10,12 @@ const port = process.env.PORT || 8080;
 
 app.use('/user',userRoute);
 
+
+
+
+// checking server is working or not
 app.get('/' , (req,res) =>{
     res.send("server is working....");
-})
-
-app.get('/test' , (req,res)=>{
-    res.send("hello from test endpoint");
 })
 
 
