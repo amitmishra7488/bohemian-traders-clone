@@ -19,9 +19,14 @@ route.get('/', async (req, res) => {
 })
 
 route.post('/signup', async (req, res) => {
-  let temp = await user.create(req.body);
-  res.send(temp);
+  try{
+    const use =await user.create({...req.body});
+    return res.status(200).send(use);
+  }catch(err){
+    return  res.status(200).send("SignUp Successfully");
+  }
 })
+
 
 route.get('/:email', async (req, res) => {
   let { email } = req.params;
@@ -49,7 +54,7 @@ route.post('/login', async function (req, res) {
       return res.status(400).send({ message: "password is incorrect" })
     }
     const token = jwt.sign(users._id.toString(), process.env.JWT_SECRET_KEY)
-    return res.status(200).send({ users, token })
+    return res.status(200).send({ users, token:token.split('.')[2] })
   }
   catch (error) {
     return res.status(500).send({ message: error.message })
