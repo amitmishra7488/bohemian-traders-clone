@@ -6,12 +6,11 @@ async function connect(){
             if(err){
                 reject(err);
             }
-
             resolve();
         })
     })
 }
-
-
-
 module.exports = connect;
+
+
+
