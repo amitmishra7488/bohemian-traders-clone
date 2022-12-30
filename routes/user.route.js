@@ -35,7 +35,9 @@ route.get('/:email', async (req, res) => {
 route.post('/login', async function (req, res) {
   try {
     const { email, password } = req.body;
+    console.log(email, password);
     const users = await user.findOne({ email: email });
+    console.log(users);
 
     if (!users) {
       return res.status(404).send({ message: 'user not found' });
@@ -47,7 +49,6 @@ route.post('/login', async function (req, res) {
       return res.status(400).send({ message: "password is incorrect" })
     }
     const token = jwt.sign(users._id.toString(), process.env.JWT_SECRET_KEY)
-    // const token = "login Successfully"
     return res.status(200).send({ users, token })
   }
   catch (error) {
@@ -55,8 +56,6 @@ route.post('/login', async function (req, res) {
   }
 
 })
-
-
 
 
 module.exports = route;
