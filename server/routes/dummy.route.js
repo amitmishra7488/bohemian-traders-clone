@@ -17,6 +17,15 @@ route.get('/', async (req, res) => {
 
   }
 })
+route.get('/:id',async function (req, res) {
+  try {
+    const id = req.params.id;
+    const data = await dummy.findOne({_id: id})
+    return res.status(200).send(data)
+  } catch (error) {
+    return res.status(500).send({message: error.message})
+  }
+})
 route.post('/post', async (req, res) => {
   try{
     const use =await dummy.create({...req.body});

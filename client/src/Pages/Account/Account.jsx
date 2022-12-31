@@ -5,7 +5,7 @@ export default function Account() {
     const[log_user_data,setLogUserData] = useState([])
 
     const getData = () => {
-        fetch(`http://localhost:8001/accounts`)
+        fetch(`http://localhost:8080/user`)
         .then((res) => res.json())
         .then((resData) => setLogUserData(resData))
     }

@@ -21,7 +21,8 @@ const ProductList = () => {
        <Grid templateColumns={{base:'repeat(2,1fr)',md:'repeat(3,1fr)',lg:'repeat(4,1fr)'}} gap='7px'   >
          {
            products.map((ele)=>{
-            return(<ProductItem key={ele.id} id={ele.id} brand={ele.brand} name={ele.name} price={ele.price} img={ele.img} />)
+            console.log(ele)
+            return(<ProductItem key={ele.id} id={ele._id} brand={ele.brand} name={ele.name} price={ele.price} img={ele.img} />)
            }) 
 
          }

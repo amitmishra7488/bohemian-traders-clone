@@ -1,15 +1,15 @@
 const { Router } = require("express");
 const jwt  = require('jsonwebtoken');
 const auth = require('../middleware/auth');
-const user = require('../models/user.model');
 const express = require("express");
+const user = require("../models/user.model");
 
 
 const route = Router();
 
 route.get('/', async (req, res) => {
   try {
-    const users = await user.find().lean().exec();
+    const users = await user.find().populate('cart').lean().exec();
     console.log(users);
     return res.status(200).send(users);
   } catch (err) {
@@ -23,20 +23,19 @@ route.post('/signup', async (req, res) => {
     const use =await user.create({...req.body});
     return res.status(200).send(use);
   }catch(err){
-    return  res.status(200).send("SignUp Successfully");
+    return  res.status(200).send({"message":"SignUp Successfully"});
   }
 })
 
 
-route.get('/:email', async (req, res) => {
-  let { email } = req.params;
-  let temp = await user.find({ email: { $eq: email } });
+route.get('/:id', async (req, res) => {
+  let { id } = req.params;
+  let temp = await user.find({ _id: { $eq: id } });
   console.log(temp);
   res.send(temp);
 })
 
 
-// login and recieve a jwt token 
 route.post('/login', async function (req, res) {
   try {
     const { email, password } = req.body;
@@ -61,6 +60,32 @@ route.post('/login', async function (req, res) {
   }
 
 })
+
+route.post('/cart', async (req, res) => {
+  const {userId, productId} = req.body
+
+  try {
+    const user = await user.findByIdAndUpdate(userId, {$addToSet: {cart: productId}})
+    return res.status(200).send(user)
+  } catch (error) {
+    return res.status(500).send({message: error.message})
+  }
+})
+
+route.post('/cart/remove', async (req, res) => {
+  const {userId, productId} = req.body
+
+  try {
+    const user = await user.findByIdAndUpdate(userId, {$pull: {cart: productId}})
+    return res.status(200).send(user)
+  } catch (error) {
+    return res.status(500).send({message: error.message})
+  }
+})
+
+
+
+
 
 
 module.exports = route;

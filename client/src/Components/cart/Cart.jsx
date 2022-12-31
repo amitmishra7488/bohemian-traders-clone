@@ -117,6 +117,7 @@ const handleQuantityChange=((payload,id)=>{
    .then((res)=>{
     setCart(res.data.cart)
     console.log("res after quantity change",res)
+    
    })
    .catch((err)=>{console.log(err)})
 

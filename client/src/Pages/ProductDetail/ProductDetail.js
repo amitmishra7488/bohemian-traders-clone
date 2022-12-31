@@ -10,6 +10,7 @@ import { productsUrl, accountsUrl } from '../../Deployed-server-url/deployed-ser
 import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom";
 import { useToast } from '@chakra-ui/react'
+import axios from 'axios';
 
 function ProductDetail() {
   const navigate = useNavigate()
@@ -90,7 +91,11 @@ function ProductDetail() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [overlay, setOverlay] = React.useState(<OverlayOne />)
 
-  function AddDATAinCart() {
+  async function AddDATAinCart(productId) {
+    // console.log('clicekd');
+    // const {data} = await axios.post(`http://localhost:8080/users`, {id: productId, userId: '63ab37edf26e17bf64853de4'})
+    // return;
+
     if (value) {
       if (user.length > 0) {
         SendDataOnCart(data, value, user);

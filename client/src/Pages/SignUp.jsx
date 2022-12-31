@@ -9,8 +9,9 @@ const newData = {
     email:"",
     password:"",
     confirmPassword:"",
-    fName:"",
+    name:"",
     lName:"",
+    // name:this.fname+this.lName,
     company:"",
     address:"",
     city:"",
@@ -35,17 +36,24 @@ export default function SignUp() {
         setFormData({ ...form_data, [name]: temp });
       };
 
-      const handleClick = () => {
-        fetch(`${accountsUrl}`,{
+      const handleClick =async  () => {
+        console.log(form_data)
+      try{
+        const res= await fetch(`${accountsUrl}/signup`,{
             method:"POST",
             body:JSON.stringify(form_data),
             headers:{
                 "Content-Type": "application/json"
             }
         })
-        .then(()=>{
-            navigate('/login')
-        })
+        const data =await res.json();
+        console.log(data)
+        navigate('/login')
+      }catch(e){
+        console.log(e.message)
+      }
+
+        
       }
   return (
     <div>
@@ -76,7 +84,7 @@ export default function SignUp() {
                     <Flex><FormLabel  fontSize={"12px"} fontWeight={"500"} letterSpacing="1.25px">FIRST NAME</FormLabel>
                     <Spacer />
                 <p className='form_control'>REQUIRED</p></Flex>
-            <Input name="fName" onChange={handleChange} value={form_data.fName} border={"1px solid grey"}
+            <Input name="name" onChange={handleChange} value={form_data.name} border={"1px solid grey"}
                         padding="8px" fontSize={"15px"} borderRadius="0px" variant={'unstyled'} type='text' /></GridItem>
             <GridItem>
                     <Flex><FormLabel  fontSize={"12px"} fontWeight={"500"} letterSpacing="1.25px">LAST NAME</FormLabel>
