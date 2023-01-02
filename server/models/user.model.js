@@ -2,11 +2,9 @@
 const mongoose = require("mongoose");
 
 const userModel = new mongoose.Schema({
-
     name:{
         type:String,
         required:true,
-        trim:true
     },
     email:{
         type:String,
@@ -16,9 +14,12 @@ const userModel = new mongoose.Schema({
     password:{
         type:String,
         required:true
-    }
-    
+    },
+    cart: [{
+        product:{ type: mongoose.Schema.Types.ObjectId, ref: "dummies"},
+        quantity:{ type: Number,default:1}
 
+    }]
 })
 
 const user = mongoose.model('users' , userModel);
