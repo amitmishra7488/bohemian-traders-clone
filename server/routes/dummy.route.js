@@ -26,6 +26,7 @@ route.get('/:id',async function (req, res) {
     return res.status(500).send({message: error.message})
   }
 })
+
 route.post('/post', async (req, res) => {
   try{
     const use =await dummy.create({...req.body});
@@ -34,6 +35,8 @@ route.post('/post', async (req, res) => {
     return  res.status(200).send("Data Created Successfully");
   }
 })
+
+
 
 
 

@@ -5,7 +5,8 @@ export default function Account() {
     const[log_user_data,setLogUserData] = useState([])
 
     const getData = () => {
-        fetch(`http://localhost:8080/user`)
+        let userId=localStorage.getItem('userId')
+        fetch(`http://localhost:8080/user/user/${userId}`)
         .then((res) => res.json())
         .then((resData) => setLogUserData(resData))
     }

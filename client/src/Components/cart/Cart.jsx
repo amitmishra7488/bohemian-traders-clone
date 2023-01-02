@@ -17,16 +17,71 @@ import {Box } from "@chakra-ui/react"
 // Modals
 import { useToast } from "@chakra-ui/react";
 import axios from "axios"
+import { useMemo } from "react";
 
 
 const Cart = () => {
   // Get data from redux store
   const toast = useToast()
- const [totalPrice, setTotalPrice]=useState(0);
+//  const [totalPrice, setTotalPrice]=useState(0);
  const [cart, setCart]=useState([]);
  const [count, setCount]=useState(0);
+ const total = ''
+ const getUserId =  () => localStorage.getItem('userId') 
 
-  const tax = (totalPrice * 0.091).toFixed(2);
+ const fetchCart = async () => {
+  const userId = localStorage.getItem('userId');
+  if(!userId) return alert('User not found')
+  try {
+    const {data} = await axios.get("http://localhost:8080/user/cart", {
+      params: {
+        userId
+      }
+    })
+    setCart(data);
+  } catch (error) {
+    alert('error in fetching cart item')
+  }
+
+ }
+
+ const handleQuantityChange = async (id, quantity) => {
+  if(quantity === 0) {
+    const okay = window.confirm('are you sure you want ot remove prduct')
+    if(!okay) return;
+    await handleDelete(id);
+  }else {
+
+    try {
+      const {data} = await axios.post('http://localhost:8080/user/cart/quantity', {id: id, quantity: quantity})
+    } catch (error) {
+      alert(error.message)
+    }
+  }
+  await fetchCart()
+}
+
+ const handleDelete = async (id) => {
+  try {
+    const {data} = axios.delete('http://localhost:8080/user/cart/' + id)
+    alert('removed from cart')
+  } catch (error) {
+    alert(error.message)
+  }
+
+ } 
+
+   const totalPrice = useMemo(() => {
+    let total = 0;
+    cart.forEach(el => total = (el.product.price * el.quantity) + total)
+    return total;
+  },[cart])
+
+
+  const taxPrice = useMemo(() => {
+    console.log(totalPrice);
+return    (totalPrice * 0.091).toFixed(2);
+  }, [totalPrice])  ;
 
 
   // set state from showing Change Size Modal
@@ -38,91 +93,96 @@ const Cart = () => {
   // Set page Title
   useEffect(() => {
     document.title = "Bohemian Traders - Shopping Cart";
+    fetchCart()
   }, []);
 
   // Disable scorlling backgronf when Modal is active
-  if (showChange) {
-    document.body.style.overflow = "hidden";
-  } else {
-    document.body.style.overflow = "scroll";
-  }
+//   if (showChange) {
+//     document.body.style.overflow = "hidden";
+//   } else {
+//     document.body.style.overflow = "scroll";
+//   }
 
-  // When cart is empty this content will be shown
+//   // When cart is empty this content will be shown
 
-const fetchdata=()=>{
-  fetch(`${accountsUrl}?login=true`)
-  .then((res)=> res.json())
-  .then((data)=>{
-    console.log("user in cart Page-> ",data[0].cart);
-    setCart(data[0].cart)
+// const fetchdata=()=>{
+//   fetch(`${accountsUrl}?login=true`)
+//   .then((res)=> res.json())
+//   .then((data)=>{
+//     console.log("user in cart Page-> ",data[0].cart);
+//     setCart(data[0].cart)
 
-  })
-}
-useEffect(()=>{
-   fetchdata();
-},[])
+//   })
+// }
+// useEffect(()=>{
+//    fetchdata();
+// },[])
 
-let total= cart.reduce((acc,ele)=>{
-  return acc +(ele.price * ele.quantity)
-},0)
-let taxPrice=10
+// let total= cart?.reduce((acc,ele)=>{
+//   return acc +(ele.price * ele.quantity)
+// },0)
+// let taxPrice=10
 
-     const handleDelete=((id)=>{
+//      const handleDelete=((id)=>{
      
-      let cartNew=cart.filter((ele)=>{
-         return ele.id!=id
-       })
-     console.log("cart after filter delete",cartNew)
+//       let cartNew=cart.filter((ele)=>{
+//          return ele.id!=id
+//        })
+//      console.log("cart after filter delete",cartNew)
      
-      axios.patch(`${accountsUrl}/${0}`,{cart:cartNew})
-      .then((res)=>{
-       toast({
-         title: 'Item deleted from cart',
-         description: "",
-         status: 'success',
-         duration: 2000,
-         isClosable: true,
-       })
-       setCart(res.data.cart)
-       console.log("res after delete",res)
-      })
-      .catch((err)=>{console.log(err)})
-     })
+//       axios.patch(`${accountsUrl}/${0}`,{cart:cartNew})
+//       .then((res)=>{
+//        toast({
+//          title: 'Item deleted from cart',
+//          description: "",
+//          status: 'success',
+//          duration: 2000,
+//          isClosable: true,
+//        })
+//        setCart(res.data.cart)
+//        console.log("res after delete",res)
+//       })
+//       .catch((err)=>{console.log(err)})
+//      })
 
-  if (cart.length === 0) {
-    return (
-      <Box>
-        <div className={styles.container}>
-          {/* user location in site */}
-          <p className={styles.location}>
-            <Link to="/">HOME</Link> / YOUR CART
-          </p>
-          <h1 className={styles.header}>YOUR CART ({cart.length} ITEMS)</h1>
-          <h3 className={styles.empty}>Your cart is empty</h3>
-        </div>
-      </Box>
-    );
-  }
-let quantity=1
-const handleQuantityChange=((payload,id)=>{
-  if(payload<1){return}
-  let cartNew= cart.filter((ele)=>{   
-      if(ele.id===id){
-        ele.quantity=payload
-      }
-     return ele    
-   })
+//   if (cart.length === 0) {
+//     return (
+//       <Box>
+//         <div className={styles.container}>
+//           {/* user location in site */}
+//           <p className={styles.location}>
+//             <Link to="/">HOME</Link> / YOUR CART
+//           </p>
+//           <h1 className={styles.header}>YOUR CART ({cart.length} ITEMS)</h1>
+//           <h3 className={styles.empty}>Your cart is empty</h3>
+//         </div>
+//       </Box>
+//     );
+//   }
+// let quantity=1
+// const handleQuantityChange=((payload,id)=>{
+//   if(payload<1){return}
+//   let cartNew= cart.filter((ele)=>{   
+//       if(ele.id===id){
+//         ele.quantity=payload
+//       }
+//      return ele    
+//    })
 
-   axios.patch(`${accountsUrl}/${0}`,{cart:cartNew})
-   .then((res)=>{
-    setCart(res.data.cart)
-    console.log("res after quantity change",res)
+//    axios.patch(`${accountsUrl}/${0}`,{cart:cartNew})
+//    .then((res)=>{
+//     setCart(res.data.cart)
+//     console.log("res after quantity change",res)
     
-   })
-   .catch((err)=>{console.log(err)})
+//    })
+//    .catch((err)=>{console.log(err)})
 
    
-})
+// })
+
+
+
+
 
   return (
     <div className={styles.container}>
@@ -134,7 +194,8 @@ const handleQuantityChange=((payload,id)=>{
       <h1 className={styles.header}>YOUR CART ({cart.length} ITEMS)</h1>
 
       {/* product info */}
-      {cart.map((product) => (
+      {cart.map(({_id, product, quantity}) => (
+        
         <div
           className={styles.productContainer}
           key={`${product.id}${product.id}`}
@@ -186,7 +247,7 @@ const handleQuantityChange=((payload,id)=>{
                         id: product.id,
                         prevSize: selectedSizeForChange,
                         newSize: selectedSize,
-                        quantity: product.quantity,
+                        quantity: quantity,
                       })
                     );
                   }}
@@ -213,16 +274,16 @@ const handleQuantityChange=((payload,id)=>{
                     className={styles.quantityBtn}
                     // decrease or remove product
                     onClick={() => {
-                      handleQuantityChange(product.quantity-1,product.id)
+                      handleQuantityChange(_id, quantity - 1);
                     }}
                   >
                     <img src={downArrow} alt="decrease" />
                   </button>
-                  <p className={styles.quantitySmall}>{/* {product.quantity} */} {product.quantity||1}</p>
+                  <p className={styles.quantitySmall}>{/* {quantity} */} {quantity}</p>
                   <button
                     className={styles.quantityBtn}
                     onClick={() => {
-                      handleQuantityChange(product.quantity+1,product.id)
+                      handleQuantityChange(_id, quantity + 1)
                      
                     }}
                   >
@@ -238,7 +299,7 @@ const handleQuantityChange=((payload,id)=>{
               <div>
                 <p className={styles.totalPrice}>
                   $<span className={styles.us}>US</span>{" "}
-                  {product.price * product.quantity}
+                  {product.price * quantity}
                 </p>
                 <img
                   className={styles.cross}
@@ -263,7 +324,7 @@ const handleQuantityChange=((payload,id)=>{
         <div className={styles.innerContainer}>
           <p className={styles.checkoutTitle}>SUBTOTAL:</p>
           <p className={styles.price}>
-            $<span className={styles.us}>US</span> {total}
+            $<span className={styles.us}>US</span> {totalPrice}
           </p>
         </div>
         <div className={styles.innerContainer}>
@@ -288,10 +349,10 @@ const handleQuantityChange=((payload,id)=>{
           <p className={styles.checkoutTitle}>GRAND TOTAL:</p>
           <p className={styles.grandTotal}>
             $<span className={styles.us}>US</span>{" "}
-            {total + taxPrice}
+            {totalPrice + parseFloat(taxPrice)}
           </p>
         </div>
-        {/* payment options */}
+        {/* payment optndleions */}
         <div className={styles.zip}>
           <p>ZIP IT NOW, PAY LATER</p>
           <img src={zip} alt="zip" />

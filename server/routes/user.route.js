@@ -1,8 +1,9 @@
 const { Router } = require("express");
-const jwt  = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth');
 const express = require("express");
 const user = require("../models/user.model");
+const Cart = require("../models/cart.model");
 
 
 const route = Router();
@@ -19,16 +20,16 @@ route.get('/', async (req, res) => {
 })
 
 route.post('/signup', async (req, res) => {
-  try{
-    const use =await user.create({...req.body});
+  try {
+    const use = await user.create({ ...req.body });
     return res.status(200).send(use);
-  }catch(err){
-    return  res.status(200).send({"message":"SignUp Successfully"});
+  } catch (err) {
+    return res.status(200).send({ "message": "SignUp Successfully" });
   }
 })
 
 
-route.get('/:id', async (req, res) => {
+route.get('/user/:id', async (req, res) => {
   let { id } = req.params;
   let temp = await user.find({ _id: { $eq: id } });
   console.log(temp);
@@ -40,7 +41,7 @@ route.post('/login', async function (req, res) {
   try {
     const { email, password } = req.body;
     console.log(email, password);
-    const users = await user.findOne({ email: email });
+    const users = await user.findOne({ email: email }).populate('cart.product');
     console.log(users);
 
     if (!users) {
@@ -53,7 +54,7 @@ route.post('/login', async function (req, res) {
       return res.status(400).send({ message: "password is incorrect" })
     }
     const token = jwt.sign(users._id.toString(), process.env.JWT_SECRET_KEY)
-    return res.status(200).send({ users, token:token.split('.')[2] })
+    return res.status(200).send({ users, token: token.split('.')[2] })
   }
   catch (error) {
     return res.status(500).send({ message: error.message })
@@ -61,25 +62,54 @@ route.post('/login', async function (req, res) {
 
 })
 
-route.post('/cart', async (req, res) => {
-  const {userId, productId} = req.body
+
+route.get('/cart', async (req, res) => {
 
   try {
-    const user = await user.findByIdAndUpdate(userId, {$addToSet: {cart: productId}})
-    return res.status(200).send(user)
+  const { userId } = req.query;
+    const carts = await Cart.find({ userId }).populate('product');
+    return res.status(200).send(carts)
   } catch (error) {
-    return res.status(500).send({message: error.message})
+    return res.status(500).send({ message: error.message })
   }
 })
 
-route.post('/cart/remove', async (req, res) => {
-  const {userId, productId} = req.body
+route.post('/cart', async (req, res) => {
+  const { userId, productId } = req.body
 
   try {
-    const user = await user.findByIdAndUpdate(userId, {$pull: {cart: productId}})
+    const isExists = await Cart.findOne({ id: userId, product: productId })
+    if(isExists) 
+    return res.status(400).send({ message: 'already exists', isExists });
+
+    await Cart.create({userId, product: productId, quantity: 1});
+    return res.status(200).send({ message: 'added'})
+  } catch (error) {
+    return res.status(500).send({ message: error.message })
+  }
+})
+
+route.post('/cart/quantity', async (req, res) => {
+  const { id, quantity } = req.body
+
+  try {
+    console.log(id)
+    const cart = await Cart.findByIdAndUpdate(id, { quantity }, { new: true });
+    console.log(cart);
+    return res.status(200).send(cart);
+  } catch (error) {
+    return res.status(500).send({ message: error.message })
+  }
+})
+
+route.delete('/cart/:id', async (req, res) => {
+  const id = req.params.id
+
+  try {
+    await Cart.findByIdAndRemove(id)
     return res.status(200).send(user)
   } catch (error) {
-    return res.status(500).send({message: error.message})
+    return res.status(500).send({ message: error.message })
   }
 })
 

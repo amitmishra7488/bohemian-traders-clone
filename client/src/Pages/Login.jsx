@@ -20,7 +20,7 @@ export default function Login() {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({})
   const [logedInUser, setLogedInUser] = useState({})
-  let id = logedInUser.id
+  
   console.log("logedInUser-->", logedInUser)
 
   const handleChange = (e) => {
@@ -44,12 +44,15 @@ export default function Login() {
       console.log(data)
       localStorage.setItem("token", data.token);
       localStorage.setItem("userId",data.users._id);
+      sessionStorage.setItem("login",true)
+      logedInUser.id=localStorage.getItem("userId");
+      localStorage.setItem('user', JSON.stringify(data.users));
       navigate('/')
     } catch (e) {
       console.log(e.message)
     }
   }
-
+  let id = logedInUser.id
 
 
 

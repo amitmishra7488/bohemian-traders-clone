@@ -26,7 +26,7 @@ const FilterBox = () => {
           </AccordionButton>
         </h2>
         <AccordionPanel pb={4}>
-          <Grid templateColumns={'repeat(2,1fr)'} gap={{basic:"3px",md:'6px'}} flexWrap={'wrap'} >
+          <Grid templateColumns={'repeat(2,1fr)'} gap={{basic:"3px",md:'6px'}} flexWrap={'wrap'} textAlign="left">
              {
               sizes.map((ele)=>{
                 return (

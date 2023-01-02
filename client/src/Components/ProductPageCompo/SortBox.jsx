@@ -19,11 +19,11 @@ const SortBox = () => {
   return (
     <Box p={'10px'} >
     <Box className={styles.filterHeadStyle} m={'10px'}>SORT BY</Box>
-     <Box  >
+     <Box textAlign="left" >
      {
       orderTypes.map((ele)=>{
         return(
-          <Box m={'10px'} onClick={(e)=>{handleSortChange(e)}} alignText={'left'} >
+          <Box m={'10px'} onClick={(e)=>{handleSortChange(e)}}  >
           <input type="checkbox" id="otherChoice1" name={ele}  style={{marginRight:"5px"}} />
           <label for="otherChoice1">{ele}</label>
           </Box>

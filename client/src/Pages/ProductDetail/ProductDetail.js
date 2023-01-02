@@ -20,137 +20,130 @@ function ProductDetail() {
   const [value, setValue] = useState(null)
   const [user, setUser] = useState([])
   const toast = useToast()
+  const [data, setData] = useState(null);
 
-  const [data, setdata] = useState({
-    "id": "",
-    "brand": "",
-    "category": "",
-    "name": "",
-    "price": "",
-    "reviews": "",
-    "rating": "",
-    "sizes": [
+  const handleAdd = async () => {
 
-    ],
-    "details": "",
-    "features": [],
-    "img": {
-      "item1": "",
-      "item2": "",
-      "model1": "",
-      "model2": ""
-    },
-    "inStock": "",
-    "newest": "",
-    "bestSelling": "",
-    "featured": ""
-  })
+      const userId = localStorage.getItem('userId')
+      const productId = id
+
+      if(!value) {
+        return alert('Please select a size')
+      }
+
+      const {data}  = await axios.post('http://localhost:8080/user/cart', {
+        userId,
+        productId
+      })
+
+      localStorage.setItem("user", JSON.stringify(data));
+      alert('added to cart succesf ully')
+
+  }
+
+  const handleWish = () => {
+
+  }
+
+  const fetchProductDetails = async () => {
+    if(!id) return ;
+    try {
+      const {data} =  await axios.get('http://localhost:8080/dummy/' + id)
+      setData(data);
+    } catch (error) {
+      alert(error.message)
+    }
+  }
+
+  console.log(data);
+
 
   useEffect(() => {
+    fetchProductDetails()
 
-    fetch(`${productsUrl}/${Index}`).then((res) => {
-      res.json().then((res) => {
-        setdata(res)
-      })
-    })
-    fetch(`${accountsUrl}`).then((res) => { return res.json() }).then((res) => {
-      let loginUser = res.filter((el) => {
-        if (el.login == true) {
-          return el
-        }
-      })
-      setUser(loginUser)
-    })
+  }, [id])
+ 
 
-
-  }, [Index])
-
-  if (Index != ID) {
-    setID(Index);
+  if(!data) {
+    return <>
+    
+    loading 
+    </>
   }
-  let rating = "";
-  if (data.rating > 4) {
-    rating = "https://www.shutterstock.com/image-vector/five-stars-quality-rating-icon-260nw-1184466310.jpg"
-  }
-  else if (data.rating > 3) {
-    rating = "https://t4.ftcdn.net/jpg/02/74/86/43/360_F_274864312_uNlm9yCpdViwKzHkCp0sOBrmJFN0pKAa.jpg"
-  }
-  else if (data.rating > 2) {
-    rating = "https://www.shutterstock.com/image-vector/three-stars-icon-vector-260nw-1316819480.jpg"
-  }
-  else {
-    rating = "https://www.shutterstock.com/image-vector/two-stars-icon-vector-260nw-1316819486.jpg"
-  }
+ 
 
-  const OverlayOne = () => (
-    <ModalOverlay
-      bg='blackAlpha.300'
-      backdropFilter='blur(10px) hue-rotate(90deg)'
-    />
-  )
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const [overlay, setOverlay] = React.useState(<OverlayOne />)
+  // const OverlayOne = () => (
+  //   <ModalOverlay
+  //     bg='blackAlpha.300'
+  //     backdropFilter='blur(10px) hue-rotate(90deg)'
+  //   />
+  // )
+  // const { isOpen, onOpen, onClose } = useDisclosure()
+  // const [overlay, setOverlay] = React.useState(<OverlayOne />)
 
-  async function AddDATAinCart(productId) {
+  // async function AddDATAinCart(productId) {
     // console.log('clicekd');
     // const {data} = await axios.post(`http://localhost:8080/users`, {id: productId, userId: '63ab37edf26e17bf64853de4'})
     // return;
 
-    if (value) {
-      if (user.length > 0) {
-        SendDataOnCart(data, value, user);
-        setOverlay(<OverlayOne />)
-        onOpen()
+  //   if (value) {
+  //     if (user.length > 0) {
+  //       SendDataOnCart(data, value, user);
+  //       setOverlay(<OverlayOne />)
+  //       onOpen()
 
-        toast({
-          title: 'Product Added',
-          description: "",
-          status: 'success',
-          duration: 4000,
-          isClosable: true,
-        })
+  //       toast({
+  //         title: 'Product Added',
+  //         description: "",
+  //         status: 'success',
+  //         duration: 4000,
+  //         isClosable: true,
+  //       })
 
-      }
-      else { navigate('/login') }
-    }
-    else {
-      return toast({
-        title: 'please select size',
-        status: 'error',
-        isClosable: true,
-      })
+  //     }
+  //     else { navigate('/login') }
+  //   }
+  //   else {
+  //     return toast({
+  //       title: 'please select size',
+  //       status: 'error',
+  //       isClosable: true,
+  //     })
 
-    }
-  }
-  function AddDATAinWishList() {
-    if (value) {
-      if (user.length > 0) {
-        SendDataOnWishList(data, value, user)
-        toast({
-          title: 'Product Added',
-          description: "",
-          status: 'success',
-          duration: 2000,
-          isClosable: true,
-        })
+  //   }
+  // }
+  // function AddDATAinWishList() {
+  //   if (value) {
+  //     if (user.length > 0) {
+  //       SendDataOnWishList(data, value, user)
+  //       toast({
+  //         title: 'Product Added',
+  //         description: "",
+  //         status: 'success',
+  //         duration: 2000,
+  //         isClosable: true,
+  //       })
 
-      }
-      else {
-        navigate('/login')
-      }
-    }
-    else {
-      return toast({
-        title: 'please select size',
-        status: 'error',
-        isClosable: true,
-      })
-    }
-  }
+  //     }
+  //     else {
+  //       navigate('/login')
+  //     }
+  //   }
+  //   else {
+  //     return toast({
+  //       title: 'please select size',
+  //       status: 'error',
+  //       isClosable: true,
+  //     })
+  //   }
+  // }
+
+
+
   return (
     <div >
       <>
-        <Modal size={'6xl'} isCentered isOpen={isOpen} onClose={onClose}>
+        {/* <Modal size={'6xl'} isCentered isOpen={isOpen} onClose={onClose}>
           {overlay}
           <ModalContent>
             <ModalHeader>
@@ -186,7 +179,7 @@ function ProductDetail() {
 
             </ModalFooter>
           </ModalContent>
-        </Modal>
+        </Modal> */}
       </>
       <Text>Home/  DRESSES  / {data.brand}</Text>
       <Grid templateColumns={['repeat(1, 1fr)', 'repeat(1, 1fr)', 'repeat(2, 1fr)']} gap={6}>
@@ -200,7 +193,7 @@ function ProductDetail() {
           <Text>{data.price}</Text>
           <Text>Or pay 4 interest-free payments with Paytem</Text>
           <Box>
-            <Image w={'100px'} src={rating} />
+            <Image w={'100px'} src={''} />
           </Box>
           <Text>SIZE:</Text>
           <RadioGroup onChange={setValue} value={value}>
@@ -214,8 +207,8 @@ function ProductDetail() {
           </RadioGroup>
           <Box>
             <Stack direction='column'>
-              <Button colorScheme='teal' variant='solid' onClick={AddDATAinCart}>Add to Cart</Button>
-              <Button colorScheme='blue' onClick={AddDATAinWishList}>ADD TO WISH LIST</Button>
+              <Button colorScheme='teal' variant='solid' onClick={handleAdd}>Add to Cart</Button>
+              <Button colorScheme='blue' onClick={handleWish}>ADD TO WISH LIST</Button>
             </Stack>
           </Box>
         </Box>

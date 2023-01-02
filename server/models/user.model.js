@@ -16,7 +16,9 @@ const userModel = new mongoose.Schema({
         required:true
     },
     cart: [{
-        type: mongoose.Schema.Types.ObjectId, ref: "dummies"
+        product:{ type: mongoose.Schema.Types.ObjectId, ref: "dummies"},
+        quantity:{ type: Number,default:1}
+
     }]
 })
 
