@@ -46,7 +46,7 @@ const Cart = () => {
   const userId = localStorage.getItem('userId');
   if(!userId) return alert('User not found')
   try {
-    const {data} = await axios.get("http://localhost:8080/user/cart", {
+    const {data} = await axios.get("https://bohemian-backend.vercel.app/user/cart", {
       params: {
         userId
       }
@@ -65,7 +65,7 @@ const Cart = () => {
   }else {
 
     try {
-      const {data} = await axios.post('http://localhost:8080/user/cart/quantity', {id: id, quantity: quantity})
+      const {data} = await axios.post('https://bohemian-backend.vercel.app/user/cart/quantity', {id: id, quantity: quantity})
     } catch (error) {
       alert(error.message)
     }
@@ -76,7 +76,7 @@ const Cart = () => {
  const handleDelete = async (id) => {
  
   try {
-    const {data} = axios.delete('http://localhost:8080/user/cart/' + id)
+    const {data} = axios.delete('https://bohemian-backend.vercel.app/user/cart/' + id)
     console.log("removed")
   } catch (error) {
     alert(error.message)

@@ -38,7 +38,7 @@ export const Navbar = () => {
         let id = localStorage.getItem('userId')
 
         try {
-            const res = await fetch(`http://localhost:8080/user/user/${id}`)
+            const res = await fetch(`https://bohemian-backend.vercel.app/user/user/${id}`)
             const data = await res.json();
             console.log(data)
             console.log(data[0].name)
@@ -52,7 +52,7 @@ export const Navbar = () => {
         setTitle(e.target.value)
         if (title !== "") {
             try {
-                const res = await fetch(`http://localhost:8080/dummy?search=${title}`)
+                const res = await fetch(`https://bohemian-backend.vercel.app/dummy?search=${title}`)
                 const data = await res.json();
                 setMatch(data);
             } catch (e) {

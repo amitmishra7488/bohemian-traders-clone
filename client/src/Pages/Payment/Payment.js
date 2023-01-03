@@ -26,7 +26,7 @@ function Payment(props) {
         console.log(userId)
         if(!userId) return alert('User not found')
         try {
-            const {data} = await axios.get("http://localhost:8080/user/cart", {
+            const {data} = await axios.get("https://bohemian-backend.vercel.app/user/cart", {
             params: {
                 userId
             }

@@ -34,7 +34,7 @@ function ProductDetail() {
       return alert('Please select a size')
     }
     try {
-      const { data } = await axios.post('http://localhost:8080/user/cart', {
+      const { data } = await axios.post('https://bohemian-backend.vercel.app/user/cart', {
         userId,
         productId
       })
@@ -67,7 +67,7 @@ function ProductDetail() {
   const fetchProductDetails = async () => {
     if (!id) return;
     try {
-      const { data } = await axios.get('http://localhost:8080/dummy/' + id)
+      const { data } = await axios.get('https://bohemian-backend.vercel.app/dummy/' + id)
       setData(data);
     } catch (error) {
       alert(error.message)
@@ -102,7 +102,7 @@ function ProductDetail() {
 
   // async function AddDATAinCart(productId) {
   // console.log('clicekd');
-  // const {data} = await axios.post(`http://localhost:8080/users`, {id: productId, userId: '63ab37edf26e17bf64853de4'})
+  // const {data} = await axios.post(`https://bohemian-backend.vercel.app/users`, {id: productId, userId: '63ab37edf26e17bf64853de4'})
   // return;
 
   //   if (value) {

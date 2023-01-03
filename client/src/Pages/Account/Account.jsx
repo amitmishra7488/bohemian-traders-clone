@@ -6,7 +6,7 @@ export default function Account() {
 
     const getData = () => {
         let userId=localStorage.getItem('userId')
-        fetch(`http://localhost:8080/user/user/${userId}`)
+        fetch(`https://bohemian-backend.vercel.app/user/user/${userId}`)
         .then((res) => res.json())
         .then((resData) => setLogUserData(resData))
     }
