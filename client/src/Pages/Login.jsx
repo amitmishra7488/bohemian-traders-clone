@@ -46,7 +46,7 @@ export default function Login() {
       localStorage.setItem("userId",data.users._id);
       sessionStorage.setItem("login",true)
       logedInUser.id=localStorage.getItem("userId");
-      localStorage.setItem('user', JSON.stringify(data.users));
+      // localStorage.setItem('user', JSON.stringify(data.users));
       navigate('/')
     } catch (e) {
       console.log(e.message)

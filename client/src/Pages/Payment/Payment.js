@@ -161,52 +161,13 @@ function Payment(props) {
                                 <Checkbox defaultChecked>Yes, I agree with the <Link>'terms and conditions.'</Link></Checkbox>
                                 <Button w={'100%'} colorScheme='blackAlpha' textColor={'white'} onClick={(e) => {
 
-                                    let cart = state.length;
-                                    let orders = state.cart.orders
-                                    orders.push(...cart)
-                                    cart = [];
-                                    if (cardname.length > 0 &&
-                                        carddate.length > 0 &&
-                                        cardnumber.length > 0 &&
-                                        cardcvv.length > 0) {
-                                        let cart = state.cart.cart;
-                                        let orders = state.cart.orders
-                                        cart = [];
-                                        orders.push(...cart)
                                         toast({
+                                            position:'top',
                                             title: 'Order Placed Successfully',
                                             status: 'success',
                                             isClosable: true,
-                                        })
-                                        // fetch(`${accountsUrl}/${State[0].id}`, {
-                                        //     headers: {
-                                        //         "Content-Type": "application/json"
-                                        //     },
-                                        //     method: "PATCH",
-                                        //     body: JSON.stringify({ cart, orders })
-                                        // }).then((res) => {
-                                        //     res.json().then((res) => {
-                                        //         return toast({
-                                        //             title: 'Order Placed Successfully',
-                                        //             status: 'success',
-                                        //             isClosable: true,
-                                        //         })
-                                        //     })
-                                        // })
-                                        // navigate('/')
-
-
-                                    }
-
-
-
-                                    else {
-                                        return toast({
-                                            title: 'Opps! card details are not available',
-                                            status: 'error',
-                                            isClosable: true,
-                                        })
-                                    }
+                                        })                                       
+                                        navigate('/')
                                 }}>
 
                                     <Link>PLACE ORDER</Link>
