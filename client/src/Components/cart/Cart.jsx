@@ -144,7 +144,7 @@ return    (totalPrice * 0.091).toFixed(2);
                   {product.name}
                 </Link>
                 <p className={styles.size}>
-                  Size: <span>{product.sizes}</span>
+                  Quantity: <span>{quantity}</span>
                 </p>
                 <button
                   className={styles.change}

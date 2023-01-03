@@ -15,7 +15,7 @@ route.get('/', async (req, res) => {
       $or: [
         {category: {$regex: search, $options: "i"}},
         {name: {$regex: search, $options: "i"}},
-        // {brand: {$regex: search, $options: "i"}},
+        
       ]
     }).lean().exec();
     console.log(users);

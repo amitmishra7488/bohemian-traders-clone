@@ -45,7 +45,6 @@ function Payment(props) {
 
         
     }, [])
-    // console.log(Coupon)
     function SubCoupon() {
         if (Coupon == 'masai' && totalCoupon == 0) {
             toast({
@@ -66,10 +65,8 @@ function Payment(props) {
         console.log(total, "after coupon")
     }
     return (
-        // <></>
         state.length > 0 ?
             <div><Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)']} w={['95%', '90%']} margin={'auto'} gap={1}>
-
                 <GridItem bg={'yellow.50'}  >
 
                     {state.length > 0 ? <Grid templateColumns='repeat(1, 1fr)' border={'1px solid gray'} margin={'auto'} gap={1}>
@@ -85,7 +82,7 @@ function Payment(props) {
                                     <Image w={'100px'} h={'100px'} src={el.product.img.item1} />
                                     <GridItem w={['100%']} ml={'40px'}>
                                         <Text>{el.product.name}</Text>
-                                        <Text>{el.product.sizes}</Text>
+                                        <Text>Quantity: {el.quantity}</Text>
                                     </GridItem>
                                     <GridItem style={{ display: 'flex' }} w={['100%']} ml={'40px'}>
                                         <Text>US$  {el.quantity * el.product.price}</Text>
