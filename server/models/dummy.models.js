@@ -11,7 +11,8 @@ const dummyModel = new mongoose.Schema({
     },
    price:{
         type:Number
-    }
+    },
+    category:{type:String}
 })
 
 const dummy = mongoose.model('dummies' , dummyModel);

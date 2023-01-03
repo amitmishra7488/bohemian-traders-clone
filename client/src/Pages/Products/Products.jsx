@@ -27,7 +27,7 @@ const Products = () => {
   return (
     <Box className={styles.prodContainer} padding="4vw" >
      <Breadscrum/>
-     <Image id={styles.poster} src="https://cdn11.bigcommerce.com/s-9srn18to/images/stencil/1100x1000/z/v2-black-friday-category-banner__24581.original.jpg" />
+     <Image id={styles.poster} src="https://cdn11.bigcommerce.com/s-9srn18to/images/stencil/original/image-manager/l-black-collection-jan-23.jpg?t=1672687485" alt="chutiya" />
      <Stack direction={{base:'column',md:'row'}} justifyContent={{base:'center',md:'space-between'}}  alignItems={"center"} >
       <Box className={styles.heading} fontSize={{base:'6vw',md:'2.7vw'}} >VIEW ALL</Box>
       {winWidth<768?

@@ -18,10 +18,22 @@ import {Box } from "@chakra-ui/react"
 import { useToast } from "@chakra-ui/react";
 import axios from "axios"
 import { useMemo } from "react";
+import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  Button,
+  useDisclosure
+} from '@chakra-ui/react'
 
 
 const Cart = () => {
   // Get data from redux store
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const cancelRef = React.useRef()
   const toast = useToast()
 //  const [totalPrice, setTotalPrice]=useState(0);
  const [cart, setCart]=useState([]);
@@ -30,6 +42,7 @@ const Cart = () => {
  const getUserId =  () => localStorage.getItem('userId') 
 
  const fetchCart = async () => {
+  
   const userId = localStorage.getItem('userId');
   if(!userId) return alert('User not found')
   try {
@@ -39,6 +52,7 @@ const Cart = () => {
       }
     })
     setCart(data);
+    console.log(cart)
   } catch (error) {
     alert('error in fetching cart item')
   }
@@ -47,9 +61,7 @@ const Cart = () => {
 
  const handleQuantityChange = async (id, quantity) => {
   if(quantity === 0) {
-    const okay = window.confirm('are you sure you want ot remove prduct')
-    if(!okay) return;
-    await handleDelete(id);
+    return onOpen()
   }else {
 
     try {
@@ -62,13 +74,15 @@ const Cart = () => {
 }
 
  const handleDelete = async (id) => {
+ 
   try {
     const {data} = axios.delete('http://localhost:8080/user/cart/' + id)
-    alert('removed from cart')
+    console.log("removed")
   } catch (error) {
     alert(error.message)
   }
-
+  onClose();
+  await fetchCart()
  } 
 
    const totalPrice = useMemo(() => {
@@ -96,94 +110,7 @@ return    (totalPrice * 0.091).toFixed(2);
     fetchCart()
   }, []);
 
-  // Disable scorlling backgronf when Modal is active
-//   if (showChange) {
-//     document.body.style.overflow = "hidden";
-//   } else {
-//     document.body.style.overflow = "scroll";
-//   }
-
-//   // When cart is empty this content will be shown
-
-// const fetchdata=()=>{
-//   fetch(`${accountsUrl}?login=true`)
-//   .then((res)=> res.json())
-//   .then((data)=>{
-//     console.log("user in cart Page-> ",data[0].cart);
-//     setCart(data[0].cart)
-
-//   })
-// }
-// useEffect(()=>{
-//    fetchdata();
-// },[])
-
-// let total= cart?.reduce((acc,ele)=>{
-//   return acc +(ele.price * ele.quantity)
-// },0)
-// let taxPrice=10
-
-//      const handleDelete=((id)=>{
-     
-//       let cartNew=cart.filter((ele)=>{
-//          return ele.id!=id
-//        })
-//      console.log("cart after filter delete",cartNew)
-     
-//       axios.patch(`${accountsUrl}/${0}`,{cart:cartNew})
-//       .then((res)=>{
-//        toast({
-//          title: 'Item deleted from cart',
-//          description: "",
-//          status: 'success',
-//          duration: 2000,
-//          isClosable: true,
-//        })
-//        setCart(res.data.cart)
-//        console.log("res after delete",res)
-//       })
-//       .catch((err)=>{console.log(err)})
-//      })
-
-//   if (cart.length === 0) {
-//     return (
-//       <Box>
-//         <div className={styles.container}>
-//           {/* user location in site */}
-//           <p className={styles.location}>
-//             <Link to="/">HOME</Link> / YOUR CART
-//           </p>
-//           <h1 className={styles.header}>YOUR CART ({cart.length} ITEMS)</h1>
-//           <h3 className={styles.empty}>Your cart is empty</h3>
-//         </div>
-//       </Box>
-//     );
-//   }
-// let quantity=1
-// const handleQuantityChange=((payload,id)=>{
-//   if(payload<1){return}
-//   let cartNew= cart.filter((ele)=>{   
-//       if(ele.id===id){
-//         ele.quantity=payload
-//       }
-//      return ele    
-//    })
-
-//    axios.patch(`${accountsUrl}/${0}`,{cart:cartNew})
-//    .then((res)=>{
-//     setCart(res.data.cart)
-//     console.log("res after quantity change",res)
-    
-//    })
-//    .catch((err)=>{console.log(err)})
-
-   
-// })
-
-
-
-
-
+ 
   return (
     <div className={styles.container}>
       {/* use location in site */}
@@ -227,31 +154,7 @@ return    (totalPrice * 0.091).toFixed(2);
                 >
                   CHANGE
                 </button>
-                {/* <ChangeSizeModal
-                  // give modal show modal status
-                  show={showChange}
-                  // give modal close modal function
-                  onClose={() => setShowChange(false)}
-                  // give modal all available size
-                  allSize={product.allSize}
-                  // give modal product name
-                  name={product.name}
-                  // give modal select size function to change size style
-                  onChangeSize={(size) => {
-                    dispatch(selectSize({ size: size }));
-                  }}
-                  // give modal dispatch function for save changed size in redux store
-                  onSave={() => {
-                    dispatch(
-                      changeSize({
-                        id: product.id,
-                        prevSize: selectedSizeForChange,
-                        newSize: selectedSize,
-                        quantity: quantity,
-                      })
-                    );
-                  }}
-                /> */}
+                
               </div>
             </div>
           </div>
@@ -293,6 +196,32 @@ return    (totalPrice * 0.091).toFixed(2);
                 <p className={styles.quantityMedium}>{product.id -product.id +1 } </p>
               </div>
             </div>
+            <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+              Delete Customer
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure? You can't undo this action afterwards.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button colorScheme='red' onClick= {()=>handleDelete(_id)} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
 
             <div className={styles.forthSection}>
               <p className={styles.title}>Total</p>
@@ -373,6 +302,7 @@ return    (totalPrice * 0.091).toFixed(2);
           <img src={gPay} alt="g-pay" />
         </div>
       </div>
+      
     </div>
   );
 };

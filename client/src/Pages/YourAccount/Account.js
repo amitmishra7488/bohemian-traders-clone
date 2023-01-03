@@ -10,7 +10,7 @@ function Account(props) {
     }, [])
     
     return (
-        <Box border={'1px solid red'}>
+        <Box >
             <Box>
                
                 <Text textAlign={'left'}>HOME  /  YOUR ACCOUNT  /  {State}</Text>

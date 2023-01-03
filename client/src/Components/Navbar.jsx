@@ -1,6 +1,6 @@
 
 import { Image } from "@chakra-ui/image";
-import { Box, Flex, Text } from "@chakra-ui/layout";
+import { Box, Flex, Text, Grid } from "@chakra-ui/layout";
 import { Link, Navigate } from "react-router-dom";
 import "./Navbar.css"
 import { RiAccountCircleLine } from "react-icons/ri"
@@ -17,14 +17,14 @@ import { useDisclosure } from "@chakra-ui/react";
 
 
 export const Navbar = () => {
-    const [User, setUser] = useState(false)
-    useEffect(() => {
-        // fetch(`${accountsUrl}?login=true`).then((el) => {
-        //     el.json().then((data) => {
-        //         setUser(data[0])
-        //     });
-        // })
-    }, [])
+    // const [User, setUser] = useState(false)
+    // useEffect(() => {
+    //     // fetch(`${accountsUrl}?login=true`).then((el) => {
+    //     //     el.json().then((data) => {
+    //     //         setUser(data[0])
+    //     //     });
+    //     // })
+    // }, [])
     const navigate = useNavigate()
     const [display, changeDisplay] = useState("none");
     const [title, setTitle] = useState("");
@@ -35,7 +35,7 @@ export const Navbar = () => {
 
 
     const getData = async () => {
-        let id=localStorage.getItem('userId')
+        let id = localStorage.getItem('userId')
 
         try {
             const res = await fetch(`http://localhost:8080/user/user/${id}`)
@@ -43,16 +43,22 @@ export const Navbar = () => {
             console.log(data)
             console.log(data[0].name)
             setName(data[0].name);
-          } catch (e) {
+        } catch (e) {
             console.log(e.message)
-          }
-            
+        }
+
     }
-    const handleChange = (e) => {
+    const handleChange = async (e) => {
         setTitle(e.target.value)
-        fetch(`http://localhost:8080/dummy?q=${title}`)
-            .then((res) => res.json())
-            .then((matchedData) => setMatch(matchedData))
+        if (title !== "") {
+            try {
+                const res = await fetch(`http://localhost:8080/dummy?search=${title}`)
+                const data = await res.json();
+                setMatch(data);
+            } catch (e) {
+                console.log(e.message)
+            }
+        }
     }
 
     console.log(match)
@@ -65,8 +71,12 @@ export const Navbar = () => {
         setMatch([])
     }
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const empty=() => {
+        setTitle("");
+        onClose();
+    }
 
-    const login=sessionStorage.getItem('login');
+    const login = sessionStorage.getItem('login');
     return (
         <Box width={["100%", "100%", "90%", "90%"]} m={["10px 0px 0px -15px", "auto", "auto", "auto"]} style={{ position: "sticky", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <Box style={{ textAlign: "center" }} className="top_flex_1" p={["0.5", "1", "1.5", '2']}>
@@ -313,16 +323,25 @@ export const Navbar = () => {
                 </Box>
                 <Box >
                     <BsSearch onClick={onOpen} fontSize={"17px"} />
-                    <Modal isOpen={isOpen} onClose={onClose}>
+                    <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" h={700} >
                         <ModalOverlay />
                         <ModalContent>
                             <ModalCloseButton />
                             <ModalBody>
-                                <Input value={title} onChange={handleChange} w={"90%"} />
+                                <Input value={title} onChange={handleChange} w={"90%"} mb={5} />
                                 {
                                     match.map((ele) => {
                                         return <Box>
-                                            <Link onClose={onClose} onClick={handleClicked} to={`products/${ele.id}`}> <Text size={"2xl"}>{ele.name}</Text></Link>
+                                            {title!=""?<Box>
+                                                <Link onClick={empty} to={`products/${ele._id}`}>
+                                                    <Grid templateColumns='repeat(4, 1fr)' gap={6} alignItems="center" mb={2}>
+                                                        <img src={ele.img.item2} alt="" h={100} />
+                                                        <Text>{ele.name}</Text>
+                                                        <Text>{ele.brand}</Text>
+                                                        <Text>{ele.category}</Text>
+                                                    </Grid>
+                                                </Link>
+                                            </Box>:null}
                                         </Box>
                                     })
                                 }
@@ -334,7 +353,7 @@ export const Navbar = () => {
 
                 </Box>
                 <Box display="flex" gap={2}>
-                    {login?<Link to="/account"><Text>{name}</Text></Link>:null}
+                    {login ? <Link to="/account"><Text>{name}</Text></Link> : null}
                     <Link to="/login"><RiAccountCircleLine fontSize={"25px"} /></Link>
 
                 </Box>

@@ -9,7 +9,15 @@ const route = Router();
 
 route.get('/', async (req, res) => {
   try {
-    const users = await dummy.find().lean().exec();
+
+    const search = req.query.search || ""
+    const users = await dummy.find({
+      $or: [
+        {category: {$regex: search, $options: "i"}},
+        {name: {$regex: search, $options: "i"}},
+        // {brand: {$regex: search, $options: "i"}},
+      ]
+    }).lean().exec();
     console.log(users);
     return res.status(200).send(users);
   } catch (err) {

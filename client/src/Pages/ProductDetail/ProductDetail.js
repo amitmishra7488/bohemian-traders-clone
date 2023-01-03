@@ -12,7 +12,10 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from '@chakra-ui/react'
 import axios from 'axios';
 
+
+
 function ProductDetail() {
+
   const navigate = useNavigate()
   let { id } = useParams();
   const [ID, setID] = useState(id)
@@ -24,20 +27,36 @@ function ProductDetail() {
 
   const handleAdd = async () => {
 
-      const userId = localStorage.getItem('userId')
-      const productId = id
+    const userId = localStorage.getItem('userId')
+    const productId = id
 
-      if(!value) {
-        return alert('Please select a size')
-      }
-
-      const {data}  = await axios.post('http://localhost:8080/user/cart', {
+    if (!value) {
+      return alert('Please select a size')
+    }
+    try {
+      const { data } = await axios.post('http://localhost:8080/user/cart', {
         userId,
         productId
       })
 
       localStorage.setItem("user", JSON.stringify(data));
-      alert('added to cart succesf ully')
+      toast({
+        position: 'top',
+        title: 'Item Added Successfully',
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+      })
+    }
+    catch (error) {
+      toast({
+        position: 'top right',
+        title: 'Item Already Added',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      })
+    }
 
   }
 
@@ -46,9 +65,9 @@ function ProductDetail() {
   }
 
   const fetchProductDetails = async () => {
-    if(!id) return ;
+    if (!id) return;
     try {
-      const {data} =  await axios.get('http://localhost:8080/dummy/' + id)
+      const { data } = await axios.get('http://localhost:8080/dummy/' + id)
       setData(data);
     } catch (error) {
       alert(error.message)
@@ -62,15 +81,15 @@ function ProductDetail() {
     fetchProductDetails()
 
   }, [id])
- 
 
-  if(!data) {
+
+  if (!data) {
     return <>
-    
-    loading 
+
+      loading
     </>
   }
- 
+
 
   // const OverlayOne = () => (
   //   <ModalOverlay
@@ -82,9 +101,9 @@ function ProductDetail() {
   // const [overlay, setOverlay] = React.useState(<OverlayOne />)
 
   // async function AddDATAinCart(productId) {
-    // console.log('clicekd');
-    // const {data} = await axios.post(`http://localhost:8080/users`, {id: productId, userId: '63ab37edf26e17bf64853de4'})
-    // return;
+  // console.log('clicekd');
+  // const {data} = await axios.post(`http://localhost:8080/users`, {id: productId, userId: '63ab37edf26e17bf64853de4'})
+  // return;
 
   //   if (value) {
   //     if (user.length > 0) {

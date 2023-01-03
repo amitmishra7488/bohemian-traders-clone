@@ -3,30 +3,49 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { accountsUrl } from "../../Deployed-server-url/deployed-server-url"
 import { useNavigate } from 'react-router-dom'
+import axios from "axios"
+
 import { LineChartOutlined } from '@ant-design/icons';
 function Payment(props) {
     const navigate = useNavigate()
-    const [State, setState] = useState([])
+    const [state, setState] = useState([])
     const [totalCoupon, settotalCoupon] = useState(0)
     const [totalPrice, settotalPrice] = useState(0)
     const [CouponOpen, setCouponOpen] = useState(false)
     const [Coupon, setCoupon] = useState(false)
-    const [Payment, setPayment] = useState(false)
+    const [Payment, setPayment] = useState(true)
     const [cardname, setcardname] = useState([])
     const [cardnumber, setcardnumber] = useState([])
     const [carddate, setcarddate] = useState([])
     const [cardcvv, setcardcvv] = useState([])
     let total = 0;
     const toast = useToast();
-    useEffect(() => {
-        fetch(`${accountsUrl}?login=true`).then((el) => {
-            el.json().then((data) => {
-                console.log(data)
-                setState(data)
+
+    async function display(){
+        const userId = localStorage.getItem('userId');
+        console.log(userId)
+        if(!userId) return alert('User not found')
+        try {
+            const {data} = await axios.get("http://localhost:8080/user/cart", {
+            params: {
+                userId
+            }
             })
-        })
+            setState(data);
+            console.log(state)
+
+        } catch (error) {
+            alert('error in fetching cart item')
+        }
+    }
+
+    useEffect(() => {
+        
+        display();
+
+        
     }, [])
-    console.log(Coupon)
+    // console.log(Coupon)
     function SubCoupon() {
         if (Coupon == 'masai' && totalCoupon == 0) {
             toast({
@@ -47,28 +66,29 @@ function Payment(props) {
         console.log(total, "after coupon")
     }
     return (
-        State.length > 0 ?
+        // <></>
+        state.length > 0 ?
             <div><Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)']} w={['95%', '90%']} margin={'auto'} gap={1}>
 
                 <GridItem bg={'yellow.50'}  >
 
-                    {State[0].cart.length > 0 ? <Grid templateColumns='repeat(1, 1fr)' border={'1px solid gray'} margin={'auto'} gap={1}>
+                    {state.length > 0 ? <Grid templateColumns='repeat(1, 1fr)' border={'1px solid gray'} margin={'auto'} gap={1}>
                         <GridItem w={['100%']} margin={'auto'} h='50' border={'1px solid gray'} alignItems={'center'} textAlign={'center'} style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Text>Order Summary</Text>
                             <Link to={'/cart'}>Edit Cart</Link>
                         </GridItem>
-                        <GridItem Mh={'400px'} scrollBehavior={'smooth'} overflowX={'scroll'} overflowY={'noun'} >    
-                        {State[0].cart.map((el) => {
-                            total = total + (el.price * el.quantity);
+                        <GridItem maxH={'400px'} scrollBehavior={'smooth'} overflowY={'scroll'}  >    
+                        {state.map((el) => {
+                            total = total + (el.product.price * el.quantity);
                             return <Grid  templateColumns='repeat(1, 1fr)' w={'100%'} margin={'auto'} gap={1}>
                                 <GridItem w={['100%']} margin={'auto'} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <Image w={'100px'} h={'100px'} src={el.img.model1} />
+                                    <Image w={'100px'} h={'100px'} src={el.product.img.item1} />
                                     <GridItem w={['100%']} ml={'40px'}>
-                                        <Text>{el.name}</Text>
-                                        <Text>{el.sizes}</Text>
+                                        <Text>{el.product.name}</Text>
+                                        <Text>{el.product.sizes}</Text>
                                     </GridItem>
                                     <GridItem style={{ display: 'flex' }} w={['100%']} ml={'40px'}>
-                                        <Text>US$  {el.quantity} * {el.price}</Text>
+                                        <Text>US$  {el.quantity * el.product.price}</Text>
                                     </GridItem>
                                 </GridItem>
                             </Grid>
@@ -89,7 +109,7 @@ function Payment(props) {
                                 <Text>Tax</Text>
                                 <Text>+{Math.ceil(total / 11)}</Text>
                             </GridItem>
-                            <Grid p={'30px'} style={{ display: 'flex', justifyContent: 'space-between' }}><Text>total Coupon</Text><Text>= {totalCoupon}</Text></Grid>
+                            {/* <Grid p={'30px'} style={{ display: 'flex', justifyContent: 'space-between' }}><Text>total Coupon</Text><Text>= {totalCoupon}</Text></Grid> */}
                             <GridItem border={'1px solid gray'} p={'30px'} w={['100%']} margin={'auto'} b={'1px solid gray'} alignItems={'center'} textAlign={'center'} style={{ justifyContent: 'space-between' }}>
                                 <Link onClick={() => {
                                     CouponOpen ? setCouponOpen(false) : setCouponOpen(true);
@@ -144,16 +164,16 @@ function Payment(props) {
                                 <Checkbox defaultChecked>Yes, I agree with the <Link>'terms and conditions.'</Link></Checkbox>
                                 <Button w={'100%'} colorScheme='blackAlpha' textColor={'white'} onClick={(e) => {
 
-                                    let cart = State[0].cart;
-                                    let orders = State[0].orders
+                                    let cart = state.length;
+                                    let orders = state.cart.orders
                                     orders.push(...cart)
                                     cart = [];
                                     if (cardname.length > 0 &&
                                         carddate.length > 0 &&
                                         cardnumber.length > 0 &&
                                         cardcvv.length > 0) {
-                                        let cart = State[0].cart;
-                                        let orders = State[0].orders
+                                        let cart = state.cart.cart;
+                                        let orders = state.cart.orders
                                         cart = [];
                                         orders.push(...cart)
                                         toast({
@@ -161,22 +181,22 @@ function Payment(props) {
                                             status: 'success',
                                             isClosable: true,
                                         })
-                                        fetch(`${accountsUrl}/${State[0].id}`, {
-                                            headers: {
-                                                "Content-Type": "application/json"
-                                            },
-                                            method: "PATCH",
-                                            body: JSON.stringify({ cart, orders })
-                                        }).then((res) => {
-                                            res.json().then((res) => {
-                                                return toast({
-                                                    title: 'Order Placed Successfully',
-                                                    status: 'success',
-                                                    isClosable: true,
-                                                })
-                                            })
-                                        })
-                                        navigate('/')
+                                        // fetch(`${accountsUrl}/${State[0].id}`, {
+                                        //     headers: {
+                                        //         "Content-Type": "application/json"
+                                        //     },
+                                        //     method: "PATCH",
+                                        //     body: JSON.stringify({ cart, orders })
+                                        // }).then((res) => {
+                                        //     res.json().then((res) => {
+                                        //         return toast({
+                                        //             title: 'Order Placed Successfully',
+                                        //             status: 'success',
+                                        //             isClosable: true,
+                                        //         })
+                                        //     })
+                                        // })
+                                        // navigate('/')
 
 
                                     }

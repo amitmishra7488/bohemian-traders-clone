@@ -12,7 +12,7 @@
     display: block;
     height: 100%;
     width: auto;
-    border: 1px solid black;
+    /* border: 1px solid black; */
 }
 .breadScrum{
     font-size: 1em;
